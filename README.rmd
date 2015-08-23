@@ -1,0 +1,65 @@
+---
+title: "README"
+author: "JimSwainston"
+date: "August 23, 2015"
+output: html_document
+---
+
+## Script Description
+
+The run_analysis.r script has been written to output a tidy data file as per the project specification. (see codebook)
+
+### What does the script do?
+
+The script has been written to output a tidy data file that adheres to the following principles of tidy data:
+
+* Each variable forms a column
+* Each observation forms a row
+* Each type of observational unit forms a table
+
+The following steps give an overiew of how the script cleans the data and outputs a tidy data file.
+
+1. The cleaning script first renames all of the column names in the test and training datasets with the variable names in features.txt
+2. The activity code variables in the y_train and y_test files are replaced with their meaningful data (e.g. 1 replaced with WALKGING) and then bound the respective train and test data sets. Column name renamed as activity_label.
+3. The subect identifier variables in the subject_train and subject_test files are bound to their respective train and test data sets. Column name renamed as subject_id.
+4. The training data and test data is stacked to create one full table containing both. 
+5. The table is reduced so it only contains columns that contain mean() or std() in the variable name plus the activity and subject identifiers
+6. The average of each variable is calculated for each activity and subject.
+7. Columns renamed to reflect the data is now an average
+8. Columns renamed to give better variable description. E.g. Acc replaced with Accelerometer for accelerometer measurements
+9. The tidy data file is written to a txt file. 
+
+The data file gives averages of a number of variables for each activity and each subject.
+
+### How do I run the script and view the results?
+
+1. Download the raw data from from https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+
+2. Copy the following data files to your working directory 
+  + X_test.txt - The test data set
+  + features.txt - variable names for the training and test data
+  + y_test.txt - activity identifiers for the test set
+  + subject_test.txt - subject indentifiers for the test set 
+  + X_train.txt - The training data set
+  + y_train.txt - activity identifiers for the training set
+  + subject_train.txt - subject indentifiers for the training set 
+  
+3. Load and the funciton run_analysis() that is contained in the script run_analysis.r. Note: this is dependent on the package dplyr.
+  + Load the script and run function
+```{r,eval=FALSE}
+   source('run_analysis.r')
+```
+  
+```{r,eval=FALSE}
+   run_analysis()
+```
+4. Check that the file tidy_data.txt has been created in your working directory
+  
+5. View the tidy data file
+
+```{r,eval=FALSE}
+data <- read.table("tidy_data.txt", header = TRUE)
+View(data)
+```
+
+

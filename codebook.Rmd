@@ -1,0 +1,202 @@
+---
+title: "CodeBook"
+author: "JimSwainston"
+date: "August 23, 2015"
+output: html_document
+---
+
+## Project Description
+The goal of this project was to prepare a tidy data set with data collected from the accelerometers from the Samsung Galaxy S smartphone. 
+The steps we were asked to complete were:
+
+   Create one R script called run_analysis.R that does the following: 
+
+   1.  Merges the training and the test sets to create one data set.
+   2.  Extracts only the measurements on the mean and standard deviation for each measurement. 
+   3.  Uses descriptive activity names to name the activities in the data set
+   4.  Appropriately labels the data set with descriptive variable names. 
+   5.  From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+
+###Collection of the raw data
+The raw data set was downloaded from https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+
+####Notes on the original raw data 
+
+The readme file from the original dataset provides the following details of how the data was collected:
+
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. 
+
+The sensor signals (accelerometer and gyroscope) were pre-processed by applying noise filters and then sampled in fixed-width sliding windows of 2.56 sec and 50% overlap (128 readings/window). The sensor acceleration signal, which has gravitational and body motion components, was separated using a Butterworth low-pass filter into body acceleration and gravity. The gravitational force is assumed to have only low frequency components, therefore a filter with 0.3 Hz cutoff frequency was used. From each window, a vector of features was obtained by calculating variables from the time and frequency domain. See 'features_info.txt' for more details. 
+
+For each record it is provided:
+
+- Triaxial acceleration from the accelerometer (total acceleration) and the estimated body acceleration.
+- Triaxial Angular velocity from the gyroscope. 
+- A 561-feature vector with time and frequency domain variables. 
+- Its activity label. 
+- An identifier of the subject who carried out the experiment.
+
+
+##Creating the tidy datafile
+The run_analysis.r script has been written to output a tidy data file that adheres to the following principles of tidy data:
+
+* Each variable forms a column
+* Each observation forms a row
+* Each type of observational unit forms a table
+
+The data file gives averages of a number of variables for each activity and each subject.
+
+###Guide to create the tidy data file
+1. Download the raw data from from https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+
+2. Copy the following data files to your working directory 
+  + X_test.txt - The test data set
+  + features.txt - variable names for the training and test data
+  + y_test.txt - activity identifiers for the test set
+  + subject_test.txt - subject indentifiers for the test set 
+  + X_train.txt - The training data set
+  + y_train.txt - activity identifiers for the training set
+  + subject_train.txt - subject indentifiers for the training set 
+  
+3. Load the funciton run_analysis() that is contained in the script run_analysis.r. Note: this is dependent on the package dplyr.
+  + Load the function 
+  ```{r}
+   source('run_analysis.r')
+  ```
+  
+4. Run the function run_analysis()
+  + check that the file tidy_data.txt has been created in your working directory
+  
+5. View the tidy data file
+
+```{r}
+data <- read.table("tidy_data.txt", header = TRUE)
+View(data)
+```
+
+
+###Cleaning of the data
+1. The cleaning script first renames all of the column names in the test and training datasets with the variable names in features.txt
+2. The activity code variables in the y_train and y_test files are replaced with their meaningful data (e.g. 1 replaced with WALKGING) and then bound the respective train and test data sets. Column name renamed as activity_label.
+3. The subect identifier variables in the subject_train and subject_test files are bound to their respective train and test data sets. Column name renamed as subject_id.
+4. The training data and test data is stacked to create one full table containing both. 
+5. The table is reduced so it only contains columns that contain mean() or std() in the variable name plus the activity and subject identifiers
+6. The average of each variable is calculated for each activity and subject.
+7. Columns renamed to reflect the data is now an average
+8. Columns renamed to give better variable description. E.g. Acc replaced with Accelerometer for accelerometer measurements
+9. The tidy data file is written to a txt file. 
+
+
+##Description of the variables in the tidy_data.txt file
+
+General description of the file including:
+
+ - Dimensions of the dataset
+ 
+[1] 180  68
+ 
+ - Summary of the data
+ 
+ Average of each mean and standard deviation measurement for each activity and subject using data collected from the accelerometers from the Samsung Galaxy S smartphone
+ 
+##Variables present in the dataset
+ 
+###subject_id 
+integer identifier of the subject who performed the activity. Its range is from 1 to 30.
+
+###activity_label
+String indentifier of the activity performed. One of 6 fixed types:
+
+* WALKING
+* WALKING_UPSTAIRS
+* WALKING_DOWNSTAIRS
+* SITTING
+* STANDING
+* LAYING
+
+###THE BELOW VARIABLES ARE DESCRIBED AS A GROUP AS THEY FOLLOW THE SAME SCHEMA
+
+numeric data type ranging between 1 and -1
+
+variable naming scheme:
+
+Each variable is recorded along three axis: x, y & z
+
+* time indicates a time domain measurement
+* frequency indicates a frequency domain measurement
+* accelerometer indicates an acceleration measurement from the accelerometer sensor
+* gyroscope indicates an angular velocity measurement from the gyroscope sensor
+* body indicates a body acceleration signal
+* gravity indicates a gravity acceleration signal
+* jerk indicates a jerk signal
+* magnitude indicates a magnitude reading of the signal
+
+all variables are averages for each subject and activity
+
+###timeBodyAccelerometer-mean()-X-average 
+###timeBodyAccelerometer-mean()-Y-average 
+###timeBodyAccelerometer-mean()-Z-average 
+###timeBodyAccelerometer-std()-X-average 
+###timeBodyAccelerometer-std()-Y-average 
+###timeBodyAccelerometer-std()-Z-average 
+###timeGravityAccelerometer-mean()-X-average 
+###timeGravityAccelerometer-mean()-Y-average 
+###timeGravityAccelerometer-mean()-Z-average 
+###timeGravityAccelerometer-std()-X-average 
+###timeGravityAccelerometer-std()-Y-average 
+###timeGravityAccelerometer-std()-Z-average 
+###timeBodyAccelerometerJerk-mean()-X-average 
+###timeBodyAccelerometerJerk-mean()-Y-average 
+###timeBodyAccelerometerJerk-mean()-Z-average 
+###timeBodyAccelerometerJerk-std()-X-average 
+###timeBodyAccelerometerJerk-std()-Y-average 
+###timeBodyAccelerometerJerk-std()-Z-average 
+###timeBodyGyroscope-mean()-X-average 
+###timeBodyGyroscope-mean()-Y-average 
+###timeBodyGyroscope-mean()-Z-average 
+###timeBodyGyroscope-std()-X-average 
+###timeBodyGyroscope-std()-Y-average 
+###timeBodyGyroscope-std()-Z-average 
+###timeBodyGyroscopeJerk-mean()-X-average 
+###timeBodyGyroscopeJerk-mean()-Y-average 
+###timeBodyGyroscopeJerk-mean()-Z-average 
+###timeBodyGyroscopeJerk-std()-X-average 
+###timeBodyGyroscopeJerk-std()-Y-average 
+###timeBodyGyroscopeJerk-std()-Z-average 
+###timeBodyAccelerometerMagnitude-mean()-average 
+###timeBodyAccelerometerMagnitude-std()-average 
+###timeGravityAccelerometerMagnitude-mean()-average 
+###timeGravityAccelerometerMagnitude-std()-average 
+###timeBodyAccelerometerJerkMagnitude-mean()-average 
+###timeBodyAccelerometerJerkMagnitude-std()-average 
+###timeBodyGyroscopeMagnitude-mean()-average 
+###timeBodyGyroscopeMagnitude-std()-average 
+###timeBodyGyroscopeJerkMagnitude-mean()-average 
+###timeBodyGyroscopeJerkMagnitude-std()-average 
+###frequencyBodyAccelerometer-mean()-X-average 
+###frequencyBodyAccelerometer-mean()-Y-average 
+###frequencyBodyAccelerometer-mean()-Z-average 
+###frequencyBodyAccelerometer-std()-X-average 
+###frequencyBodyAccelerometer-std()-Y-average 
+###frequencyBodyAccelerometer-std()-Z-average 
+###frequencyBodyAccelerometerJerk-mean()-X-average 
+###frequencyBodyAccelerometerJerk-mean()-Y-average 
+###frequencyBodyAccelerometerJerk-mean()-Z-average 
+###frequencyBodyAccelerometerJerk-std()-X-average 
+###frequencyBodyAccelerometerJerk-std()-Y-average 
+###frequencyBodyAccelerometerJerk-std()-Z-average 
+###frequencyBodyGyroscope-mean()-X-average 
+###frequencyBodyGyroscope-mean()-Y-average 
+###frequencyBodyGyroscope-mean()-Z-average 
+###frequencyBodyGyroscope-std()-X-average 
+###frequencyBodyGyroscope-std()-Y-average 
+###frequencyBodyGyroscope-std()-Z-average 
+###frequencyBodyAccelerometerMagnitude-mean()-average 
+###frequencyBodyAccelerometerMagnitude-std()-average 
+###frequencyBodyBodyAccelerometerJerkMagnitude-mean()-average 
+###frequencyBodyBodyAccelerometerJerkMagnitude-std()-average 
+###frequencyBodyBodyGyroscopeMagnitude-mean()-average 
+###frequencyBodyBodyGyroscopeMagnitude-std()-average 
+###frequencyBodyBodyGyroscopeJerkMagnitude-mean()-average 
+###frequencyBodyBodyGyroscopeJerkMagnitude-std()-average
